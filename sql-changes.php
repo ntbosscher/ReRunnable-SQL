@@ -70,6 +70,28 @@ END";
 		return $out;
 	}
 
+	if(preg_match("/^ALTER TABLE \[dbo\].\[([A-z0-9\_]+)\] ALTER COLUMN \[([A-z0-9\_]+)\] \[varchar\] \(([0-9]+)\) (COLLATE [A-z0-9\_]+)* (NULL)*/", $lines[0], $matches)){
+
+			$table = $matches[1];
+			$col = $matches[2];
+			$varcharLen = $matches[3];
+			$collate = $matches[4];
+			$nullable = $matches[5];
+			
+			if($nullable == ""){
+				$isNullable = "NO";
+			}else{
+				$isNullable = "YES";
+			}
+
+			$out = "IF NOT EXISTS(SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='$table' AND COLUMN_NAME='$col' AND DATA_TYPE='varchar' AND CHARACTER_MAXIMUM_LENGTH='$varcharLen' AND IS_NULLABLE = '$isNullable')
+			BEGIN 
+				$query;
+			END";
+
+			return $out;
+	}
+
 	return $query;
 }
 
