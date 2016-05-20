@@ -30,3 +30,6 @@ Curently setup for:
 
 1. FK and PK constraints
 2. DROP and CREATE Table
+
+
+- Not tested on Windows
