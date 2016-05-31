@@ -92,6 +92,21 @@ END";
 			return $out;
 	}
 
+	if(preg_match("/^ALTER TABLE \[dbo\].\[([A-z0-9\_]+)\] ADD[\ \t]*?\n[\ \t]*?\[([A-z0-9]+)\] \[(datetime|int)\] (NULL)*/", $lines[0]."\n".$lines[1], $matches)){
+
+		$table = $matches[1];
+		$col = $matches[2];
+		$type = $matches[3];
+		$null = $matches[4] == "" ? "NO" : "YES";
+
+		$out = "IF NOT EXISTS(SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='$table' AND COLUMN_NAME='$col' AND DATA_TYPE='$type' AND IS_NULLABLE = '$null')
+			BEGIN 
+				$query;
+			END";
+
+		return $out;
+	}
+
 	return $query;
 }
 
